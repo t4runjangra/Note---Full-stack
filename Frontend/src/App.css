@@ -1,0 +1,230 @@
+:root {
+  font-family: Inter, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #111827;
+  background-color: #f3f4f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f3f4f6;
+}
+
+.hero-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #f8fafc;
+}
+
+.nav-brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.nav-btn,
+.cta-button,
+.secondary-button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.nav-btn {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.hero-content {
+  padding: 20px 0;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  margin: 0 0 12px;
+  color: #111827;
+}
+
+.hero-text {
+  margin: 0 0 18px;
+  max-width: 560px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.cta-button {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.preview-card,
+.note-panel {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.preview-card h2,
+.note-panel h3 {
+  margin: 0 0 6px;
+  color: #111827;
+}
+
+.preview-card p,
+.note-panel p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.preview-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.preview-item {
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  color: #374151;
+}
+
+.note-panel {
+  margin-top: 24px;
+}
+
+.note-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.secondary-button {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.note-form {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 18px;
+}
+
+.note-input,
+.note-textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.note-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.note-list {
+  display: grid;
+  gap: 12px;
+}
+
+.note-card {
+  border: 1px solid #dbeafe;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  
+}
+
+.note-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.note-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.note-meta {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.note-content {
+  margin: 0;
+  color: #4b5563;
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  .hero-section {
+    padding: 16px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .note-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
