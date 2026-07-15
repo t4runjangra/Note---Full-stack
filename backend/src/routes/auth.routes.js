@@ -32,5 +32,5 @@ authRouter.post("/resend-verification", resendEmailVerificationLimiter, validate
 authRouter.post("/logout", verifyJWT, logout)
 
 authRouter.post("/forget-password", validate(forgetPasswordSchema), forgetPassword)
-authRouter.post("/reset-password/:token", resetPasswordLimiter.validate(passwordResetSchema), resetPassword)
+authRouter.post("/reset-password/:token", resetPasswordLimiter,validate(passwordResetSchema), resetPassword)
 export default authRouter

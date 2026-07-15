@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import API from "../api/axios";
 function Navbar() {
   const { themeMode, lightTheme, darkTheme } = useTheme();
-  const { user } = useAuth();
+  const { user,logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   function handleChange(e) {
@@ -17,6 +18,7 @@ function Navbar() {
   }
 
   async function handleLogout() {
+    await logout();
     navigate("/");
   }
 

@@ -1,18 +1,51 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, useAsyncError, useNavigate } from 'react-router-dom'
+import API from '../api/axios'
+import { AuthContext } from '../context/AuthContext'
 function Signup() {
+    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [loading, setLoading] = useState(false)
+    const { user, setUser } = useContext(AuthContext);
     const navigate = useNavigate()
     async function handleSubmit(e) {
         e.preventDefault()
-
         if (password !== confirmPassword) {
             alert('Passwords do not match')
             return
         }
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            console.error("Password must be at least 8 characters and include uppercase, lowercase, and a number.");
+            return;
+        }
+        try {
+            setLoading(true)
+            const { data } = await API.post("/auth/register", {
+                username,
+                email,
+                password
+            })
+            const userData = {
+                _id: data.data.user._id,
+                name: data.data.user.username,
+                email: data.data.user.email
+            }
+            console.log(data);
+            console.log(userData);
+
+            setUser(userData)
+
+        } catch (error) {
+            console.log(error.response?.data);
+            console.log(error.response?.status);
+        }
+        finally {
+            setLoading(false)
+        }
+
 
 
     }
@@ -31,6 +64,18 @@ function Signup() {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="johndoe"
+                            required
+                            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                        />
                         <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
                             Email
                         </label>
@@ -103,7 +148,7 @@ function Signup() {
                         </span>
                     </Link>
                 </p>
-            </div>``
+            </div>
         </div>
     )
 }

@@ -1,28 +1,45 @@
 import { useContext, createContext, useEffect, useState } from "react";
+import API from "../api/axios";
 export const AuthContext = createContext()
 
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
-
+    const [authChecked, setAuthChecked] = useState(false)
     useEffect(() => {
-        async function getCurrentUser() {
+        const getCurrentUser = async () => {
+            try {
+                const response = await API.get("/auth/profile")
+                setUser(response.data.data)
+            } catch (error) {
+                if (error.response?.status === 401) {
+                    setUser(null)
+                } else {
+                    console.error("Failed to restore authentication", error)
+                }
+            }finally{
+                setAuthChecked(true)
+            }
+        }
+        getCurrentUser()
+    }, [])
+
+    const logout = async () => {
+        try {
+            await API.post("/auth/logout")
+            setUser(null)
+        } catch (error) {
+            console.log("Error while logging out User", error.message);
 
         }
-        getCurrentUser();
-
-
-        return () => {
-            subscription.unsubscribe()
-        }
-    }, []);
-
+    }
     return (
         <AuthContext.Provider
             value={{
                 user,
-                setUser
-
+                setUser,
+                logout,
+                authChecked
             }}>
             {children}
         </AuthContext.Provider>

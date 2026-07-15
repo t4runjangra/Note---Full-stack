@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import NoteCard from './NoteCard'
 import useAuth from '../context/AuthContext';
+import API from '../api/axios';
 function Note({ showForm, onToggleForm, onCloseForm, setShowForm }) {
     const { user } = useAuth()
     const [editingId, setEditingId] = useState(null)
@@ -16,34 +17,65 @@ function Note({ showForm, onToggleForm, onCloseForm, setShowForm }) {
     }
 
     const getNotes = async () => {
+        try {
+            const response = await API.get("/note")
+            setNotes(response.data.data)
+        } catch (error) {
+            console.log("error while getting the notes", error);
+        }
     }
 
     useEffect(() => {
         getNotes()
     }, [])
 
-async function handleCreate(e) {
-    e.preventDefault()
-
-    if (!title.trim() || !content.trim()) return
-
-    if (editingId) {
-
-    } else {
-
+    async function handleDelete(id) {
+        try {
+            await API.delete(`/note/${id}`)
+        } catch (error) {
+            console.log("Error while deleting the note", error.message);
+        }
+        await getNotes()
     }
+    async function handleCreate(e) {
+        e.preventDefault()
 
-    onCloseForm()
-    resetForm()
-}
+        if (!title.trim() || !content.trim()) return
+
+        if (editingId) {
+            console.log(editingId);
+
+            try {
+                await API.patch(`/note/${editingId}`, {
+                    title,
+                    content
+                })
+            } catch (error) {
+                console.log("Error while updating the note", error);
+            }
+        } else {
+            try {
+                await API.post("/note", {
+                    title,
+                    content
+                })
+            } catch (error) {
+                console.log("Error while creating the note", error.message);
+            }
+        }
+        await getNotes()
+        onCloseForm()
+        resetForm()
+    }
 
 
     function handleEdit(note) {
         setTitle(note.title)
         setContent(note.content)
-        setEditingId(note.id)
+        setEditingId(note._id)
         setShowForm(true)
     }
+
 
 
     return (
@@ -91,11 +123,11 @@ async function handleCreate(e) {
             <div className="mt-4 grid gap-3">
                 {notes.map((note) => (
                     <NoteCard
-                        key={note.id}
-                        id={note.id}
+                        key={note._id}
+                        id={note._id}
                         title={note.title}
                         content={note.content}
-                        date={new Date(note.created_at).toLocaleString()}
+                        date={new Date(note.createdAt || note.updatedAt).toLocaleString()}
                         onDelete={handleDelete}
                         onUpdate={() => handleEdit(note)}
                     />
@@ -103,6 +135,6 @@ async function handleCreate(e) {
             </div>
         </section>
 
-)
+    )
 }
 export default Note

@@ -39,7 +39,7 @@ export const register = asyncHandler(async (req, res) => {
     `
     );
 
-    const createdUser = await User.findById(user._id).select("-password")
+    const createdUser = await User.findById(user._id).select("-password -emailVerificationToken")
     if (!createdUser) {
         throw new apiError(500, "Something went wrong While regestirng a user");
     }
