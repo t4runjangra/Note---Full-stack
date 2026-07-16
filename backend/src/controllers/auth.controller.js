@@ -115,28 +115,32 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     if (!refreshToken) {
         throw new apiError(401, "Refresh token missing")
     }
-    const verifiedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+    try {
+        const verifiedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
 
-    const decodedID = verifiedRefreshToken.id
+        const decodedID = verifiedRefreshToken.id
 
-    const user = await User.findById(decodedID)
-    if (!user) {
-        throw new apiError(404, "User not found")
-    }
-    if (refreshToken !== user.refreshToken) {
-        throw new apiError(401, "Invalid Refresh Token");
-    }
-    const newAccessToken = await user.generateAccessToken()
-    const newRefreshToken = await user.generateRefreshToken()
-    user.refreshToken = newRefreshToken
+        const user = await User.findById(decodedID)
+        if (!user) {
+            throw new apiError(404, "User not found")
+        }
+        if (refreshToken !== user.refreshToken) {
+            throw new apiError(401, "Invalid Refresh Token");
+        }
+        const newAccessToken = await user.generateAccessToken()
+        const newRefreshToken = await user.generateRefreshToken()
+        user.refreshToken = newRefreshToken
 
-    await user.save({
-        validateBeforeSave: false
-    })
-    const options = {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict"
+        await user.save({
+            validateBeforeSave: false
+        })
+        const options = {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict"
+        }
+    } catch (error) {
+        throw new apiError(401, "Invalid or expired refresh token")
     }
     return res
         .status(200)
@@ -422,7 +426,7 @@ export const forgetPassword = asyncHandler(async (req, res) => {
 
 
 export const resetPassword = asyncHandler(async (req, res) => {
-    const {  token: rawToken } = req.params
+    const { token: rawToken } = req.params
     if (!rawToken) {
         throw new apiError(400, "Email token is required")
     }
@@ -442,7 +446,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     user.refreshToken = null
     await user.save()
 
-    
+
     return res.status(200).json(
         new apiResponse(200, null, "Password reset successful")
     )

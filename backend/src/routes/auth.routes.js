@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, register, profile, updateAvatar, uploadCoverAvatar, logout, resendEmail, forgetPassword, resetPassword } from "../controllers/auth.controller.js"
+import { login, register, profile, updateAvatar, uploadCoverAvatar, logout, resendEmail, forgetPassword, resetPassword, refreshAccessToken } from "../controllers/auth.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { registerSchema, loginSchema, resendEmailSchema, forgetPasswordSchema, passwordResetSchema } from "../validators/auth.validator.js";
@@ -12,6 +12,8 @@ const authRouter = Router()
 authRouter.post("/register", validate(registerSchema), register)
 authRouter.post("/login", validate(loginSchema), login)
 authRouter.get("/profile", verifyJWT, profile)
+authRouter.post("/refresh-token", verifyJWT, refreshAccessToken)
+
 
 authRouter.patch(
     "/avatar",
