@@ -1,84 +1,140 @@
-import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { Link, Navigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
-import { useEffect } from "react";
+import { NotebookPen } from "lucide-react";
 
 function Hero() {
-    const { user } = useAuth()
-    const navigate = useNavigate()
-    useEffect(() => {
-        if (user) {
-            navigate('/home')
-        }
-    }, [user])
+    const { user } = useAuth();
+
+    if (user) {
+        return <Navigate to="/home" replace />;
+    }
+
     return (
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
-            {/* Hero Section */}
-            <section className="mx-auto flex max-w-7xl flex-col items-center px-6 py-20 text-center">
-                <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
-                    Powered by React 
+        <div className="min-h-screen bg-slate-950 text-slate-100">
+
+            {/* Navbar */}
+            <header className="border-b border-slate-800">
+                <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+
+                    <Link
+                        to="/"
+                        className="text-2xl font-bold tracking-tight flex justify-center items-center gap-2"
+                    >
+                        <NotebookPen size={22} />
+
+                        My Notes
+                    </Link>
+
+                    <nav className="hidden items-center gap-8 text-sm text-slate-400 md:flex">
+                        <a href="#features" className="hover:text-white">
+                            Features
+                        </a>
+
+                        <a
+                            href="https://github.com/"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:text-white"
+                        >
+                            GitHub
+                        </a>
+                    </nav>
+
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to="/signin"
+                            className="rounded-xl px-5 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
+                        >
+                            Sign In
+                        </Link>
+
+                        <Link
+                            to="/signup"
+                            className="rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                        >
+                            Get Started
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
+            {/* Hero */}
+            <section className="mx-auto flex max-w-7xl flex-col items-center px-6 py-24 text-center">
+
+                <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-400">
+                    Secure • Fast • Cloud Based
                 </span>
 
-                <h1 className="mt-8 max-w-4xl text-5xl font-bold leading-tight text-slate-900 dark:text-white md:text-7xl">
+                <h1 className="mt-8 max-w-4xl text-5xl font-bold leading-tight md:text-7xl">
                     Capture ideas before
-                    <span className="text-blue-600"> they disappear.</span>
+                    <span className="text-blue-500"> they disappear.</span>
                 </h1>
 
-                <p className="mt-6 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-                    Create, organize, and access your notes from anywhere.
-                    Secure authentication, cloud storage, and a distraction-free
-                    writing experience.
+                <p className="mt-6 max-w-2xl text-lg text-slate-400">
+                    Organize your thoughts, projects, and daily notes in one
+                    distraction-free workspace with secure authentication and
+                    cloud storage.
                 </p>
 
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-                    <button className="rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition hover:bg-blue-700">
-                        Get Started
-                    </button>
+                <div className="mt-10 flex flex-wrap justify-center gap-4">
 
-                    <button className="rounded-2xl border border-slate-300 px-8 py-4 text-lg font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
-                        Learn More
-                    </button>
+                    <Link
+                        to="/signup"
+                        className="rounded-2xl bg-blue-600 px-8 py-4 text-lg font-semibold transition hover:bg-blue-700"
+                    >
+                        Get Started
+                    </Link>
+
+                    <Link
+                        to="/signin"
+                        className="rounded-2xl border border-slate-700 px-8 py-4 text-lg font-semibold transition hover:bg-slate-800"
+                    >
+                        Sign In
+                    </Link>
+
                 </div>
             </section>
 
             {/* Features */}
-            <section className="mx-auto grid max-w-6xl gap-6 px-6 pb-20 md:grid-cols-3">
-                <div className="rounded-3xl bg-white p-6 shadow-sm dark:bg-slate-800">
-                    <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-white">
+            <section
+                id="features"
+                className="mx-auto grid max-w-6xl gap-6 px-6 pb-24 md:grid-cols-3"
+            >
+                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
+                    <h3 className="mb-3 text-xl font-semibold">
                         Secure Authentication
                     </h3>
 
-                    <p className="text-slate-600 dark:text-slate-400">
-                        Sign up and login securely with Auth and email
-                        verification.
+                    <p className="text-slate-400">
+                        JWT authentication with refresh-token rotation keeps
+                        your account protected.
                     </p>
                 </div>
 
-                <div className="rounded-3xl bg-white p-6 shadow-sm dark:bg-slate-800">
-                    <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-white">
+                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
+                    <h3 className="mb-3 text-xl font-semibold">
                         Cloud Notes
                     </h3>
 
-                    <p className="text-slate-600 dark:text-slate-400">
-                        Your notes are stored in PostgreSQL and available across
-                        devices.
+                    <p className="text-slate-400">
+                        Access your notes anywhere with automatic cloud
+                        synchronization.
                     </p>
                 </div>
 
-                <div className="rounded-3xl bg-white p-6 shadow-sm dark:bg-slate-800">
-                    <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-white">
-                        Fast & Simple
+                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
+                    <h3 className="mb-3 text-xl font-semibold">
+                        Built for Productivity
                     </h3>
 
-                    <p className="text-slate-600 dark:text-slate-400">
-                        Focus on writing and organizing ideas without unnecessary
-                        complexity.
+                    <p className="text-slate-400">
+                        A clean workspace designed to help you focus on writing,
+                        organizing, and sharing ideas.
                     </p>
                 </div>
             </section>
         </div>
-    )
+    );
 }
 
-export default Hero
-
+export default Hero;

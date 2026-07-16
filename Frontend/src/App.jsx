@@ -4,24 +4,35 @@ import { ThemeProvider } from './context/Theme'
 import Hero from './pages/Hero'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-import { Route, Routes,Navigate } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Layout from './pages/Layout'
 import HeroSection from "./components/HeroSection.jsx"
 import useAuth from "./context/AuthContext";
-
+import Loading from './components/Loading.jsx'
 
 function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, authChecked } = useAuth();
+
+  if (!authChecked) {
+    return <Loading />;
+  }
+
   return user ? children : <Navigate to="/signin" replace />;
 }
 
 function GuestRoute({ children }) {
-  const { user } = useAuth();
-  return user ? <Navigate to="/home" replace /> : children;
+    const { user } = useAuth();
+
+    if (user) {
+        return <Navigate to="/home" replace />;
+    }
+
+    return children;
 }
 
+
 function App() {
-  const { user } = useAuth();
+  const { user, authChecked } = useAuth();
   const [themeMode, setThemeMode] = useState("dark")
   function darkTheme() {
     setThemeMode("dark")
@@ -33,6 +44,8 @@ function App() {
     document.querySelector("html").classList.remove("light", "dark")
     document.querySelector("html").classList.add(themeMode)
   }, [themeMode])
+
+
   return (
     <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
       <Routes>

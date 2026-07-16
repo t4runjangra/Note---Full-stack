@@ -9,20 +9,39 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const getCurrentUser = async () => {
             try {
-                const response = await API.get("/auth/profile")
-                setUser(response.data.data)
+                const response = await API.get("/auth/profile");
+                setUser(response.data.data);
             } catch (error) {
                 if (error.response?.status === 401) {
-                    setUser(null)
-                } else {
-                    console.error("Failed to restore authentication", error)
+                    try {
+                        await API.post("/auth/refresh-token");
+
+                        const response = await API.get("/auth/profile");
+                        setUser(response.data.data);
+                    } catch (refreshError) {
+                        if (refreshError.response?.status === 401) {
+                            setUser(null);
+                        } else {
+                            console.error(
+                                "Failed to refresh authentication",
+                                refreshError
+                            );
+                        }
+                    }
+                } else { 
+                    console.error(
+                        "Failed to restore authentication",
+                        error
+                    );
                 }
-            }finally{
-                setAuthChecked(true)
+            } finally {
+                setAuthChecked(true);
             }
-        }
-        getCurrentUser()
-    }, [])
+        };
+
+        getCurrentUser();
+    }, []);
+console.log(user);
 
     const logout = async () => {
         try {
