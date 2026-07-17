@@ -7,7 +7,7 @@ import useTheme from "../context/Theme"
 
 // Updated items mapping to match your exact application URLs
 const navigationItems = [
-  { key: "Notes", label: "Notes", path: "/home", icon: FileText, comingSoon: false }, // Directing to /home based on your note list layout context
+  { key: "Notes", label: "Notes", path: "/note", icon: FileText, comingSoon: false }, // Directing to /note based on your note list layout context
   { key: "Profile", label: "Profile", path: "/profile", icon: UserRound, comingSoon: false },
   { key: "Shared Notes", label: "Shared Notes", path: "/shared", icon: Users, comingSoon: true },
   { key: "Archive", label: "Archive", path: "/archive", icon: Archive, comingSoon: true },
@@ -100,7 +100,7 @@ function Navbar() {
 
       <aside className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white/95 px-4 py-5 shadow-[12px_0_30px_rgba(15,23,42,0.06)] backdrop-blur transition-transform duration-300 dark:border-slate-800 dark:bg-slate-900/95 lg:sticky lg:translate-x-0 lg:top-0 lg:h-screen ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex items-center justify-between">
-          <Link to="/home" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+          <Link to="/note" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 to-violet-500 text-lg font-semibold text-white shadow-lg">
               M
             </div>

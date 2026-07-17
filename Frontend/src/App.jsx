@@ -24,7 +24,7 @@ function GuestRoute({ children }) {
   const { user } = useAuth();
 
   if (user) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/note" replace />;
   }
 
   return children;
@@ -57,7 +57,7 @@ function App() {
             path="/"
             element=
             {
-              user ? <Navigate to="/home" /> : <Hero />
+              user ? <Navigate to="/note" /> : <Hero />
             } />
           <Route
             path="/signup"
@@ -86,7 +86,7 @@ function App() {
           />
 
           <Route
-            path="/home"
+            path="/note"
             element={
               <ProtectedRoute>
                 <Note />
