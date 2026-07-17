@@ -1,24 +1,25 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Archive, FileText, LayoutGrid, LogOut, MoonStar, Settings, SunMedium, Trash2, UserRound, Users, X, Menu } from "lucide-react"
 import { motion, useReducedMotion } from "framer-motion"
 import useAuth from "../context/AuthContext"
 import useTheme from "../context/Theme"
 
+// Updated items mapping to match your exact application URLs
 const navigationItems = [
-  { key: "Dashboard", label: "Dashboard", icon: LayoutGrid, comingSoon: false },
-  { key: "Notes", label: "Notes", icon: FileText, comingSoon: false },
-  { key: "Profile", label: "Profile", icon: UserRound, comingSoon: false },
-  { key: "Shared Notes", label: "Shared Notes", icon: Users, comingSoon: true },
-  { key: "Archive", label: "Archive", icon: Archive, comingSoon: true },
-  { key: "Trash", label: "Trash", icon: Trash2, comingSoon: true },
-  { key: "Settings", label: "Settings", icon: Settings, comingSoon: false }
+  { key: "Notes", label: "Notes", path: "/home", icon: FileText, comingSoon: false }, // Directing to /home based on your note list layout context
+  { key: "Profile", label: "Profile", path: "/profile", icon: UserRound, comingSoon: false },
+  { key: "Shared Notes", label: "Shared Notes", path: "/shared", icon: Users, comingSoon: true },
+  { key: "Archive", label: "Archive", path: "/archive", icon: Archive, comingSoon: true },
+  { key: "Trash", label: "Trash", path: "/trash", icon: Trash2, comingSoon: true },
+  { key: "Settings", label: "Settings", path: "/settings", icon: Settings, comingSoon: false }
 ]
 
-function Navbar({ activeView = "Dashboard", onNavigate = () => {} }) {
+function Navbar() {
   const { themeMode, lightTheme, darkTheme } = useTheme()
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation() 
   const [menuOpen, setMenuOpen] = useState(false)
   const shouldReduceMotion = useReducedMotion()
 
@@ -30,6 +31,7 @@ function Navbar({ activeView = "Dashboard", onNavigate = () => {} }) {
     }
   }
 
+
   async function handleLogout() {
     await logout()
     navigate("/")
@@ -39,24 +41,27 @@ function Navbar({ activeView = "Dashboard", onNavigate = () => {} }) {
     <div className="space-y-1.5">
       {navigationItems.map((item) => {
         const Icon = item.icon
-        const isActive = activeView === item.key
+
+        const isActive = location.pathname === item.path && !item.comingSoon
         const isDisabled = item.comingSoon
 
+        const Component = isDisabled ? "button" : motion(Link)
+
         return (
-          <motion.button
+          <Component
             key={item.key}
-            whileHover={shouldReduceMotion ? undefined : { scale: 1.02, y: -1 }}
-            whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
-            type="button"
+            to={isDisabled ? undefined : item.path}
+            whileHover={shouldReduceMotion || isDisabled ? undefined : { scale: 1.02, y: -1 }}
+            whileTap={shouldReduceMotion || isDisabled ? undefined : { scale: 0.97 }}
+            type={isDisabled ? "button" : undefined}
             onClick={() => {
               if (!isDisabled) {
-                onNavigate(item.key)
                 setMenuOpen(false)
               }
             }}
             className={`flex w-full items-center justify-between rounded-2xl px-3 py-2.5 text-left text-sm font-medium transition ${
               isActive
-                ? "bg-blue-600 text-white shadow-sm"
+                ? "bg-blue-600 text-white shadow-sm shadow-blue-600/10"
                 : isDisabled
                   ? "cursor-not-allowed text-slate-400 dark:text-slate-500"
                   : "text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
@@ -71,7 +76,7 @@ function Navbar({ activeView = "Dashboard", onNavigate = () => {} }) {
                 Soon
               </span>
             ) : null}
-          </motion.button>
+          </Component>
         )
       })}
     </div>
@@ -95,7 +100,7 @@ function Navbar({ activeView = "Dashboard", onNavigate = () => {} }) {
 
       <aside className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white/95 px-4 py-5 shadow-[12px_0_30px_rgba(15,23,42,0.06)] backdrop-blur transition-transform duration-300 dark:border-slate-800 dark:bg-slate-900/95 lg:sticky lg:translate-x-0 lg:top-0 lg:h-screen ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+          <Link to="/home" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 to-violet-500 text-lg font-semibold text-white shadow-lg">
               M
             </div>

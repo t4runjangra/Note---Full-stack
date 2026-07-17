@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, register, profile, updateAvatar, uploadCoverAvatar, logout, resendEmail, forgetPassword, resetPassword, refreshAccessToken } from "../controllers/auth.controller.js"
+import { login, register, profile, updateAvatar, uploadCoverAvatar, logout, resendEmail, forgetPassword, resetPassword, refreshAccessToken, updateProfile } from "../controllers/auth.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { registerSchema, loginSchema, resendEmailSchema, forgetPasswordSchema, passwordResetSchema } from "../validators/auth.validator.js";
@@ -22,10 +22,15 @@ authRouter.patch(
     updateAvatar
 );
 
-authRouter.patch(          
+authRouter.patch(
+    "/update-profile",
+    verifyJWT,
+    updateProfile
+);
+authRouter.patch(
     "/cover-avatar",
     verifyJWT,
-    diskUpload.single("cover-avatar"),
+    diskUpload.single("coverAvatar"),
     uploadCoverAvatar
 )
 authRouter.get("/verify-email/:rawToken", verifyEmail)
@@ -34,5 +39,5 @@ authRouter.post("/resend-verification", resendEmailVerificationLimiter, validate
 authRouter.post("/logout", verifyJWT, logout)
 
 authRouter.post("/forget-password", validate(forgetPasswordSchema), forgetPassword)
-authRouter.post("/reset-password/:token", resetPasswordLimiter,validate(passwordResetSchema), resetPassword)
+authRouter.post("/reset-password/:token", resetPasswordLimiter, validate(passwordResetSchema), resetPassword)
 export default authRouter

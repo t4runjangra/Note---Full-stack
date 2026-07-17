@@ -82,7 +82,43 @@ const userSchema = new mongoose.Schema({
     emailVerificationExpiry: {
         type: Date,
         default: null
-    }
+    },
+    fullName: {
+        type: String,
+        default: "",
+        trim: true,
+    },
+
+    bio: {
+        type: String,
+        default: "",
+        maxlength: 250,
+        trim: true,
+    },
+
+    github: {
+        type: String,
+        default: "",
+        trim: true,
+    },
+
+    linkedin: {
+        type: String,
+        default: "",
+        trim: true,
+    },
+
+    website: {
+        type: String,
+        default: "",
+        trim: true,
+    },
+
+    location: {
+        type: String,
+        default: "",
+        trim: true,
+    },
 
 })
 

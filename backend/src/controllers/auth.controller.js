@@ -152,7 +152,41 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
             "Access token refreshed successfully"
         ))
 })
+export const updateProfile = asyncHandler(async (req, res) => {
+    const {
+        fullName,
+        bio,
+        github,
+        linkedin,
+        website,
+        location,
+    } = req.body;
 
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        throw new apiError(404, "User not found");
+    }
+
+    if (fullName !== undefined) user.fullName = fullName;
+    if (bio !== undefined) user.bio = bio;
+    if (github !== undefined) user.github = github;
+    if (linkedin !== undefined) user.linkedin = linkedin;
+    if (website !== undefined) user.website = website;
+    if (location !== undefined) user.location = location;
+    await user.save();
+
+    const updatedUser = await User.findById(user._id)
+        .select("-password -refreshToken");
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            updatedUser,
+            "Profile updated successfully"
+        )
+    );
+});
 
 export const updateAvatar = asyncHandler(async (req, res) => {
     if (!req.file) {

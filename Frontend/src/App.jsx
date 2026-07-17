@@ -6,10 +6,10 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import Layout from './pages/Layout'
-import HeroSection from "./components/HeroSection.jsx"
 import useAuth from "./context/AuthContext";
 import Loading from './components/Loading.jsx'
-
+import Profile from './pages/Profile.jsx'
+import Note from './components/Note.jsx'
 function ProtectedRoute({ children }) {
   const { user, authChecked } = useAuth();
 
@@ -21,13 +21,13 @@ function ProtectedRoute({ children }) {
 }
 
 function GuestRoute({ children }) {
-    const { user } = useAuth();
+  const { user } = useAuth();
 
-    if (user) {
-        return <Navigate to="/home" replace />;
-    }
+  if (user) {
+    return <Navigate to="/home" replace />;
+  }
 
-    return children;
+  return children;
 }
 
 
@@ -45,6 +45,9 @@ function App() {
     document.querySelector("html").classList.add(themeMode)
   }, [themeMode])
 
+  if (!authChecked) {
+    return <Loading />;
+  }
 
   return (
     <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
@@ -73,12 +76,28 @@ function App() {
               </GuestRoute>
             }
           />
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <Login />
+              </GuestRoute>
+            }
+          />
 
           <Route
-            path='/home'
+            path="/home"
             element={
               <ProtectedRoute>
-                <HeroSection />
+                <Note />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/profile'
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

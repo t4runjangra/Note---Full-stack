@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import NoteCard from './NoteCard'
 import API from '../api/axios'
-
+import useAuth from '../context/AuthContext'
 function Note({ showForm, onToggleForm, onCloseForm, setShowForm }) {
     const [editingId, setEditingId] = useState(null)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [notes, setNotes] = useState([])
     const shouldReduceMotion = useReducedMotion()
-
+    const { user } = useAuth()
     function resetForm() {
         setTitle('')
         setContent('')
@@ -76,6 +76,50 @@ function Note({ showForm, onToggleForm, onCloseForm, setShowForm }) {
 
     return (
         <section className="rounded-[28px] border border-slate-200 bg-slate-50/90 p-5 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-800/70 sm:p-6">
+            <section className="rounded-3xl border border-slate-700 bg-slate-900 p-8">
+
+                <p className="text-sm text-blue-400">
+                    Welcome back
+                </p>
+
+                <h1 className="mt-2 text-4xl font-bold text-white">
+                    Good afternoon, {user?.username} 👋
+                </h1>
+
+                <p className="mt-4 max-w-2xl text-slate-400">
+                    Stay organized. Capture ideas before they disappear.
+                </p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-8">
+
+                    <div>
+                        <p className="text-3xl font-bold text-white">
+                            {notes.length}
+                        </p>
+                        <p className="text-sm text-slate-400">
+                            Total Notes
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="text-lg font-semibold text-white">
+                            {notes.length ? "Today" : "--"}
+                        </p>
+                        <p className="text-sm text-slate-400">
+                            Last Updated
+                        </p>
+                    </div>
+
+                    <button
+                        onClick={onToggleForm}
+                        className="ml-auto rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700"
+                    >
+                        + New Note
+                    </button>
+
+                </div>
+
+            </section>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Your notes</h3>
@@ -83,13 +127,7 @@ function Note({ showForm, onToggleForm, onCloseForm, setShowForm }) {
                         Capture ideas quickly and keep each note easy to revisit.
                     </p>
                 </div>
-                <button
-                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
-                    type="button"
-                    onClick={onToggleForm}
-                >
-                    {showForm ? 'Cancel' : 'New note'}
-                </button>
+
             </div>
 
             <AnimatePresence initial={false}>
