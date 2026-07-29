@@ -1,12 +1,11 @@
-import { Schema } from "mongoose";
-import mongoose from "mongoose";
-import { User } from "./user.model.js";
+import mongoose, { Schema } from "mongoose";
 
 const noteSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        maxlength: 200
     },
     content: {
         type: String,
@@ -15,7 +14,8 @@ const noteSchema = new mongoose.Schema({
     },
     owner: {
         type: Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required:true
     }
 }
     , {

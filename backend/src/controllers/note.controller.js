@@ -1,8 +1,8 @@
+import mongoose from "mongoose";
 import { Note } from "../models/note.model.js";
 import { apiError } from "../utils/api.error.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-
 
 export const createNote = asyncHandler(
     async (req, res) => {
@@ -39,13 +39,16 @@ export const getNotes = asyncHandler(
 export const updateNote = asyncHandler(async (req, res) => {
     const noteId = req.params.id;
 
+    if (!mongoose.isValidObjectId(noteId)) {
+        throw new apiError(400, "Invalid note ID");
+    }
     if (!noteId) throw new apiError(400, "Note ID is required")
 
 
     const { title, content } = req.body;
 
 
-    const note = await Note.findById({
+    const note = await Note.findOne({
 
         _id: noteId,
         owner: req.user.id
@@ -54,13 +57,13 @@ export const updateNote = asyncHandler(async (req, res) => {
 
     if (!note) throw new apiError(404, "Note not found")
 
-
-    if (!note.owner.equals(req.user.id)) {
-        throw new apiError(403, "Forbidden");
+    if (title !== undefined) {
+        note.title = title;
     }
 
-    note.title = title;
-    note.content = content;
+    if (content !== undefined) {
+        note.content = content;
+    }
 
     await note.save();
 
@@ -73,6 +76,9 @@ export const updateNote = asyncHandler(async (req, res) => {
 export const deleteNote = asyncHandler(async (req, res) => {
     const noteId = req.params.id;
 
+    if (!mongoose.isValidObjectId(noteId)) {
+        throw new apiError(400, "Invalid note ID");
+    }
     if (!noteId) throw new apiError(400, "Note ID is required")
 
 
@@ -83,13 +89,6 @@ export const deleteNote = asyncHandler(async (req, res) => {
     });
 
     if (!note) throw new apiError(404, "Note not found")
-
-
-    if (!note.owner.equals(req.user.id)) {
-        throw new apiError(403, "Forbidden");
-    }
-
-    await note.deleteOne();
 
     return res.status(200).json(
         new apiResponse(200, null, "Note deleted successfully")
