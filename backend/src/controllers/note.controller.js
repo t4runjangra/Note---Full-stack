@@ -32,7 +32,7 @@ export const getNotes = asyncHandler(
             page,
             limit
         } = req.validated.query;
-        
+
         const sortOrder = order === "asc" ? 1 : -1;
 
         const skip = (page - 1) * limit;
@@ -58,7 +58,7 @@ export const getNotes = asyncHandler(
         }
 
         const notes = await Note.find(query).sort({
-            [sortField]: sortOrder
+            [sort]: sortOrder
         }).skip(skip).limit(limit)
 
         const totalNotes = await Note.countDocuments(query);
@@ -143,4 +143,50 @@ export const deleteNote = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new apiResponse(200, null, "Note deleted successfully")
     )
+})
+
+export const pinNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id
+    });
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+
+    if (!note.pinnedAt) {
+        note.pinnedAt = new Date();
+        await note.save();
+    }
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            note,
+            "Note is pinned"
+        )
+    );
+});
+
+export const unpinNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id
+    })
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+    if (note.pinnedAt) {
+        note.pinnedAt = null;
+        await note.save();
+    }
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            note,
+            "Note is unpinned"
+        )
+    );
 })

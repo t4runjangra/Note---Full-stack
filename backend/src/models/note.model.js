@@ -12,10 +12,14 @@ const noteSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    pinnedAt: {
+        type: Date,
+        default: null
+    },
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required:true
+        required: true
     }
 }
     , {

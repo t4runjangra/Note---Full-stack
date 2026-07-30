@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { positive, z } from "zod";
 
 export const createNoteSchema = z.object({
@@ -25,6 +26,9 @@ export const getNotesQuerySchema = z.object({
     sort: z
         .enum(["createdAt", "updatedAt", "title"])
         .default("desc"),
+    order: z
+        .enum(["asc", "desc"])
+        .default("desc"),
     page: z.coerce
         .number()
         .int()
@@ -38,3 +42,12 @@ export const getNotesQuerySchema = z.object({
         .default(20)
 
 }).strict()
+
+export const noteIdParamSchema = z.object({
+    id: z.string().refine(
+        (id) => mongoose.isValidObjectId(id),
+        {
+            message: "Invalid note ID"
+        }
+    )
+});
