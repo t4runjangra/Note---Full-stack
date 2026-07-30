@@ -3,3 +3,4 @@
 
 public/temp/*
 !public/temp/.gitkeep
+/src/script

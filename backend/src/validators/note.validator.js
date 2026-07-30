@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { positive, z } from "zod";
 
 export const createNoteSchema = z.object({
     title: z
@@ -15,3 +15,26 @@ export const createNoteSchema = z.object({
 export const updateNoteSchema = createNoteSchema.partial().refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided"
 })
+
+export const getNotesQuerySchema = z.object({
+    search: z.
+        string()
+        .trim()
+        .max(100)
+        .optional(),
+    sort: z
+        .enum(["createdAt", "updatedAt", "title"])
+        .default("desc"),
+    page: z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(1),
+    limit: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(100)
+        .default(20)
+
+}).strict()

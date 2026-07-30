@@ -10,10 +10,12 @@ noteRouter.post("/note",
     validate(createNoteSchema),
     createNote
 )
-noteRouter.get("/note",
+noteRouter.get(
+    "/note",
     verifyJWT,
+    validate(getNotesQuerySchema, "query"),
     getNotes
-)
+);
 noteRouter.patch("/note/:id",
     verifyJWT,
     validate(updateNoteSchema),

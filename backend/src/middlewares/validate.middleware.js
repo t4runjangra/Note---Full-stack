@@ -1,8 +1,8 @@
 import { apiError } from "../utils/api.error.js";
 
-export const validate = (schema) => {
+export const validate = (schema, source = "body") => {
     return (req, res, next) => {
-        const result = schema.safeParse(req.body);
+        const result = schema.safeParse(req[source]);
 
         if (!result.success) {
             const errors = result.error.issues.map((issue) => ({
@@ -17,7 +17,9 @@ export const validate = (schema) => {
             );
         }
 
-        req.body = result.data;
+        req.validated ??= {};
+        req.validated[source] = result.data;
+
         next();
     };
 };

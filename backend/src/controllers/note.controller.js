@@ -25,12 +25,62 @@ export const createNote = asyncHandler(
 
 export const getNotes = asyncHandler(
     async (req, res) => {
-        const notes = await Note.find({
-            owner: req.user.id
-        }).populate("owner", "-password -refreshToken -avatar -coverAvatar");
+        const {
+            search,
+            sort,
+            order,
+            page,
+            limit
+        } = req.validated.query;
+        
+        const sortOrder = order === "asc" ? 1 : -1;
 
+        const skip = (page - 1) * limit;
+
+        const query = {
+            owner: req.user.id
+        };
+        if (search) {
+            query.$or = [
+                {
+                    title: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                },
+                {
+                    content: {
+                        $regex: search,
+                        $options: "i"
+                    }
+                }
+            ];
+        }
+
+        const notes = await Note.find(query).sort({
+            [sortField]: sortOrder
+        }).skip(skip).limit(limit)
+
+        const totalNotes = await Note.countDocuments(query);
+        const totalPages = Math.ceil(totalNotes / limit);
+        const hasNextPage = page < totalPages;
+        const hasPreviousPage = page > 1;
         return res.status(200).json(
-            new apiResponse(200, notes, "Notes fetched successfully")
+            new apiResponse(
+                200,
+                {
+                    notes,
+                    pagination: {
+                        page,
+                        limit,
+                        totalNotes,
+                        totalPages,
+                        hasNextPage,
+                        hasPreviousPage
+                    }
+                },
+                "Notes fetched successfully"
+            )
         )
     }
 )
