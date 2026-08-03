@@ -273,8 +273,8 @@ VITE_API_URL=
 - Profile
 ![alt text](image-5.png)
 - Mobile View
-![alt text](image-6.png)
 - Light Mode
+![alt text](image-6.png)
 ![alt text](image-7.png)
 ---
 
