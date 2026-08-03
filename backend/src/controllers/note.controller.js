@@ -34,12 +34,16 @@ export const getNotes = asyncHandler(
         } = req.validated.query;
 
         const sortOrder = order === "asc" ? 1 : -1;
-
+        const sortQuery = {
+            pinnedAt: -1,
+            [sort]: sortOrder
+        };
         const skip = (page - 1) * limit;
 
         const query = {
-            owner: req.user.id
-        };
+            owner: req.user.id,
+            deletedAt: null
+        }
         if (search) {
             query.$or = [
                 {
@@ -57,9 +61,10 @@ export const getNotes = asyncHandler(
             ];
         }
 
-        const notes = await Note.find(query).sort({
-            [sort]: sortOrder
-        }).skip(skip).limit(limit)
+        const notes = await Note.find(query)
+            .sort(sortQuery)
+            .skip(skip)
+            .limit(limit);
 
         const totalNotes = await Note.countDocuments(query);
         const totalPages = Math.ceil(totalNotes / limit);
@@ -190,3 +195,96 @@ export const unpinNote = asyncHandler(async (req, res) => {
         )
     );
 })
+
+export const trashNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id,
+    });
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+
+    if (note.deletedAt) {
+        return res.status(200).json(
+            new apiResponse(
+                200,
+                note,
+                "Note is already in trash"
+            )
+        );
+    }
+
+    note.deletedAt = new Date();
+    await note.save();
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            note,
+            "Note moved to trash successfully"
+        )
+    );
+});
+
+export const restoreNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id,
+    });
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+
+    if (!note.deletedAt) {
+        return res.status(200).json(
+            new apiResponse(
+                200,
+                note,
+                "Note is already restored"
+            )
+        );
+    }
+
+    note.deletedAt = null;
+    await note.save();
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            note,
+            "Note restored successfully"
+        )
+    );
+});
+
+
+export const permanentDeleteNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id,
+    });
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+
+    if (!note.deletedAt) {
+        throw new apiError(
+            400,
+            "Move note to trash before permanently deleting it"
+        );
+    }
+
+    await note.deleteOne();
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            null,
+            "Note deleted permanently"
+        )
+    );
+});

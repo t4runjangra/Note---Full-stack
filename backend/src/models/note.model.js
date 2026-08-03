@@ -16,6 +16,10 @@ const noteSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    deletedAt: {
+        type: Date,
+        default: null
+    },
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -26,5 +30,16 @@ const noteSchema = new mongoose.Schema({
         timestamps: true
     }
 )
+
+noteSchema.index({
+    owner: 1,
+    pinnedAt: -1,
+    updatedAt: -1
+});
+
+noteSchema.index({
+    title: "text",
+    content: "text"
+});
 
 export const Note = mongoose.model("Note", noteSchema)
