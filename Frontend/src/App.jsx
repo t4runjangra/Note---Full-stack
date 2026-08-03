@@ -6,101 +6,68 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import Layout from './pages/Layout'
-import useAuth from "./context/AuthContext";
+import useAuth from './context/AuthContext'
 import Loading from './components/Loading.jsx'
 import Profile from './pages/Profile.jsx'
 import Note from './components/Note.jsx'
+import Archive from './pages/Archive.jsx'
+import Trash from './pages/Trash.jsx'
+import Settings from './pages/Settings.jsx'
+
 function ProtectedRoute({ children }) {
-  const { user, authChecked } = useAuth();
+  const { user, authChecked } = useAuth()
 
   if (!authChecked) {
-    return <Loading />;
+    return <Loading />
   }
 
-  return user ? children : <Navigate to="/signin" replace />;
+  return user ? children : <Navigate to="/signin" replace />
 }
 
 function GuestRoute({ children }) {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   if (user) {
-    return <Navigate to="/note" replace />;
+    return <Navigate to="/note" replace />
   }
 
-  return children;
+  return children
 }
 
-
 function App() {
-  const { user, authChecked } = useAuth();
-  const [themeMode, setThemeMode] = useState("dark")
+  const { user, authChecked } = useAuth()
+  const [themeMode, setThemeMode] = useState('dark')
+
   function darkTheme() {
-    setThemeMode("dark")
+    setThemeMode('dark')
   }
+
   function lightTheme() {
-    setThemeMode("light")
+    setThemeMode('light')
   }
+
   useEffect(() => {
-    document.querySelector("html").classList.remove("light", "dark")
-    document.querySelector("html").classList.add(themeMode)
+    document.querySelector('html').classList.remove('light', 'dark')
+    document.querySelector('html').classList.add(themeMode)
   }, [themeMode])
 
   if (!authChecked) {
-    return <Loading />;
+    return <Loading />
   }
 
   return (
     <ThemeProvider value={{ themeMode, lightTheme, darkTheme }}>
       <Routes>
         <Route element={<Layout />}>
-          <Route
-            path="/"
-            element=
-            {
-              user ? <Navigate to="/note" /> : <Hero />
-            } />
-          <Route
-            path="/signup"
-            element={
-              <GuestRoute>
-                <Signup />
-              </GuestRoute >
-            }
-          />
-
-          <Route
-            path="/signin"
-            element={
-              <GuestRoute>
-                <Login />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <GuestRoute>
-                <Login />
-              </GuestRoute>
-            }
-          />
-
-          <Route
-            path="/note"
-            element={
-              <ProtectedRoute>
-                <Note />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/profile'
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={user ? <Navigate to="/note" /> : <Hero />} />
+          <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
+          <Route path="/signin" element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="/note" element={<ProtectedRoute><Note /></ProtectedRoute>} />
+          <Route path="/archive" element={<ProtectedRoute><Archive /></ProtectedRoute>} />
+          <Route path="/trash" element={<ProtectedRoute><Trash /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         </Route>
       </Routes>
     </ThemeProvider>

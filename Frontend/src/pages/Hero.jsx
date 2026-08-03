@@ -31,7 +31,7 @@ function Hero() {
                         </a>
 
                         <a
-                            href="https://github.com/"
+                            href="https://github.com/t4runjangra"
                             target="_blank"
                             rel="noreferrer"
                             className="hover:text-white"

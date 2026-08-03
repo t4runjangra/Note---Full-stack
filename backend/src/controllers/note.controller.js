@@ -30,7 +30,9 @@ export const getNotes = asyncHandler(
             sort,
             order,
             page,
-            limit
+            limit,
+            archived,
+            trash
         } = req.validated.query;
 
         const sortOrder = order === "asc" ? 1 : -1;
@@ -41,9 +43,17 @@ export const getNotes = asyncHandler(
         const skip = (page - 1) * limit;
 
         const query = {
-            owner: req.user.id,
-            deletedAt: null,
-            archivedAt: null
+            owner: req.user.id
+        };
+
+        if (trash) {
+            query.deletedAt = { $ne: null };
+        } else if (archived) {
+            query.archivedAt = { $ne: null };
+            query.deletedAt = null;
+        } else {
+            query.deletedAt = null;
+            query.archivedAt = null;
         }
         if (search) {
             query.$or = [
