@@ -97,7 +97,7 @@ function Navbar() {
         <div className="flex items-center justify-between">
           <Link to="/note" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 to-violet-500 text-lg font-semibold text-white shadow-lg">
-              M
+              <img src="/favicon.png" alt="Scribe" className='object-cover' />
             </div>
             <div>
               <div className="text-base font-semibold text-slate-900 dark:text-white">Scribe</div>
