@@ -423,7 +423,7 @@ export const forgetPassword = asyncHandler(async (req, res) => {
     const { rawToken, hashedToken, expiry } = genereateVerificationToken()
 
     const verificationUrl =
-        `${process.env.BACKEND_URL}/api/v1/auth/reset-password/${rawToken}`;
+        `${process.env.FRONTEND_URL}/reset-password/${rawToken}`;
 
     user.passwordResetToken = hashedToken
     user.passwordResetExpiry = expiry

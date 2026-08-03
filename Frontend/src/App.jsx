@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { ThemeProvider } from './context/Theme'
-import Hero from './pages/Hero'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
+import { ThemeProvider } from './context/Theme.jsx'
+import Hero from './pages/Hero.jsx'
+import Login from './pages/Login.jsx'
+import Signup from './pages/Signup.jsx'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import Layout from './pages/Layout'
 import useAuth from './context/AuthContext'
@@ -13,6 +13,8 @@ import Note from './components/Note.jsx'
 import Archive from './pages/Archive.jsx'
 import Trash from './pages/Trash.jsx'
 import Settings from './pages/Settings.jsx'
+import ForgotPassword from './pages/Forgotpassowrd,.jsx'
+import ResetPassword from './pages/Resetpassword.jsx'
 
 function ProtectedRoute({ children }) {
   const { user, authChecked } = useAuth()
@@ -63,6 +65,8 @@ function App() {
           <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
           <Route path="/signin" element={<GuestRoute><Login /></GuestRoute>} />
           <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+          <Route path="/reset-password/:token" element={<GuestRoute><ResetPassword /></GuestRoute>} />
           <Route path="/note" element={<ProtectedRoute><Note /></ProtectedRoute>} />
           <Route path="/archive" element={<ProtectedRoute><Archive /></ProtectedRoute>} />
           <Route path="/trash" element={<ProtectedRoute><Trash /></ProtectedRoute>} />

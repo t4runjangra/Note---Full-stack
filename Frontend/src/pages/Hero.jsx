@@ -1,6 +1,7 @@
 import { Link, Navigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import { NotebookPen } from "lucide-react";
+import FeatureSection from "../components/FeatureSection";
 
 function Hero() {
     const { user } = useAuth();
@@ -96,43 +97,7 @@ function Hero() {
             </section>
 
             {/* Features */}
-            <section
-                id="features"
-                className="mx-auto grid max-w-6xl gap-6 px-6 pb-24 md:grid-cols-3"
-            >
-                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
-                    <h3 className="mb-3 text-xl font-semibold">
-                        Secure Authentication
-                    </h3>
-
-                    <p className="text-slate-400">
-                        JWT authentication with refresh-token rotation keeps
-                        your account protected.
-                    </p>
-                </div>
-
-                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
-                    <h3 className="mb-3 text-xl font-semibold">
-                        Cloud Notes
-                    </h3>
-
-                    <p className="text-slate-400">
-                        Access your notes anywhere with automatic cloud
-                        synchronization.
-                    </p>
-                </div>
-
-                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
-                    <h3 className="mb-3 text-xl font-semibold">
-                        Built for Productivity
-                    </h3>
-
-                    <p className="text-slate-400">
-                        A clean workspace designed to help you focus on writing,
-                        organizing, and sharing ideas.
-                    </p>
-                </div>
-            </section>
+            <FeatureSection />
         </div>
     );
 }

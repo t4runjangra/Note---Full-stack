@@ -83,9 +83,12 @@ function Login() {
                         />
                         Remember me
                     </label>
-                    <button type="button" className="text-sm font-medium text-slate-300 transition hover:text-blue-400">
+                    <Link
+                        to="/forgot-password"
+                        className="text-sm font-medium text-slate-300 transition hover:text-blue-400"
+                    >
                         Forgot password?
-                    </button>
+                    </Link>
                 </div>
 
                 <SubmitButton loading={loading} label="Sign in" loadingLabel="Signing in..." />
