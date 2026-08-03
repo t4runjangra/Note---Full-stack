@@ -20,6 +20,10 @@ const noteSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    archivedAt: {
+        type: Date,
+        default: null
+    },
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User",

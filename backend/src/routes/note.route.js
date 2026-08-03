@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { createNote, deleteNote, getNotes, updateNote , pinNote, unpinNote,trashNote, restoreNote, permanentDeleteNote } from "../controllers/note.controller.js";
+import { createNote, deleteNote, getNotes, updateNote, pinNote, unpinNote, trashNote, restoreNote, permanentDeleteNote, archiveNote, unarchiveNote } from "../controllers/note.controller.js";
 import { createNoteSchema, updateNoteSchema, noteIdParamSchema, getNotesQuerySchema } from "../validators/note.validator.js";
 import { validate } from "../middlewares/validate.middleware.js";
 const noteRouter = Router()
@@ -62,6 +62,20 @@ noteRouter.delete(
     verifyJWT,
     validate(noteIdParamSchema, "params"),
     permanentDeleteNote
+);
+
+noteRouter.patch(
+    "/note/:id/archive",
+    verifyJWT,
+    validate(noteIdParamSchema, "params"),
+    archiveNote
+);
+
+noteRouter.patch(
+    "/note/:id/unarchive",
+    verifyJWT,
+    validate(noteIdParamSchema, "params"),
+    unarchiveNote
 );
 export default noteRouter
 

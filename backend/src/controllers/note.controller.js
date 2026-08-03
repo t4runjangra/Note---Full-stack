@@ -42,7 +42,8 @@ export const getNotes = asyncHandler(
 
         const query = {
             owner: req.user.id,
-            deletedAt: null
+            deletedAt: null,
+            archivedAt: null
         }
         if (search) {
             query.$or = [
@@ -285,6 +286,70 @@ export const permanentDeleteNote = asyncHandler(async (req, res) => {
             200,
             null,
             "Note deleted permanently"
+        )
+    );
+});
+
+export const archiveNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id
+    });
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+
+    if (note.archivedAt) {
+        return res.status(200).json(
+            new apiResponse(
+                200,
+                note,
+                "Note is already archived"
+            )
+        );
+    }
+
+    note.archivedAt = new Date();
+    await note.save();
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            note,
+            "Note archived successfully"
+        )
+    );
+});
+
+export const unarchiveNote = asyncHandler(async (req, res) => {
+    const note = await Note.findOne({
+        _id: req.params.id,
+        owner: req.user.id
+    });
+
+    if (!note) {
+        throw new apiError(404, "Note not found");
+    }
+
+    if (!note.archivedAt) {
+        return res.status(200).json(
+            new apiResponse(
+                200,
+                note,
+                "Note is already unarchived"
+            )
+        );
+    }
+
+    note.archivedAt = null;
+    await note.save();
+
+    return res.status(200).json(
+        new apiResponse(
+            200,
+            note,
+            "Note unarchived successfully"
         )
     );
 });
