@@ -100,7 +100,7 @@ function Navbar() {
               M
             </div>
             <div>
-              <div className="text-base font-semibold text-slate-900 dark:text-white">My Notes</div>
+              <div className="text-base font-semibold text-slate-900 dark:text-white">Scribe</div>
               <div className="text-sm text-slate-500 dark:text-slate-400">Workspace</div>
             </div>
           </Link>

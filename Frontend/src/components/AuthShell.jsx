@@ -54,7 +54,7 @@ function AuthShell({
             </Link>
 
             <p className="mt-8 text-xs font-semibold tracking-[0.35em] text-blue-400 uppercase">
-              My Notes
+              Scribe
             </p>
 
             <h1 className="mt-4 max-w-md text-5xl font-bold leading-tight">

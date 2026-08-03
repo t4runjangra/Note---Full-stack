@@ -23,7 +23,7 @@ function Hero() {
                     >
                         <NotebookPen size={22} />
 
-                        My Notes
+                        Scribe
                     </Link>
 
                     <nav className="hidden items-center gap-8 text-sm text-slate-400 md:flex">
