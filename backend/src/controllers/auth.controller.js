@@ -7,6 +7,11 @@ import { uploadOnCloudinary, deleteFromCloudinary, uploadLocalFileToCloudinary }
 import { genereateVerificationToken } from "../utils/generateVerificationToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto"
+
+
+const isProduction = process.env.NODE_ENV === "production";
+
+
 export const register = asyncHandler(async (req, res) => {
     const { email, password, username } = req.body
     const { rawToken, hashedToken, expiry } = genereateVerificationToken()
@@ -74,19 +79,25 @@ export const login = asyncHandler(async (req, res) => {
     });
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
-    const options = {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict"
-    }
+const options = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "strict",
+    path: "/",
+};
 
-    return res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(
-            new apiResponse(200, { user: loggedInUser }, "User Logged in Successful")
+
+return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new apiResponse(
+            200,
+            { user: loggedInUser },
+            "User Logged in Successful"
         )
+    )
 })
 
 
@@ -103,8 +114,8 @@ export const logout = asyncHandler(async (req, res) => {
         }
     })
     return res.status(200)
-        .clearCookie("refreshToken")
-        .clearCookie("accessToken")
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options);
         .json(
             new apiResponse(200, null, "User logged out Successfully")
         )
@@ -134,11 +145,13 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
         await user.save({
             validateBeforeSave: false
         })
-        const options = {
-            httpOnly: true,
-            secure: false,
-            sameSite: "strict"
-        }
+const options = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "strict",
+    path: "/",
+};
+
     } catch (error) {
         throw new apiError(401, "Invalid or expired refresh token")
     }
