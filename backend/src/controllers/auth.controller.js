@@ -113,58 +113,89 @@ export const logout = asyncHandler(async (req, res) => {
             refreshToken: ""
         }
     })
-    return res.status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options);
-        .json(
-            new apiResponse(200, null, "User logged out Successfully")
-        )
+    const getCookieOptions = () => {
+    const isProduction = process.env.NODE_ENV === "production";
+
+    return {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "strict",
+        path: "/",
+    };
+};
+return res
+    .status(200)
+    .clearCookie("accessToken", getCookieOptions())
+    .clearCookie("refreshToken", getCookieOptions())
+    .json(
+        new apiResponse(200, null, "User logged out successfully")
+    )
 })
 
+
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-    const refreshToken = req.cookies.refreshToken
-    if (!refreshToken) {
-        throw new apiError(401, "Refresh token missing")
+    const incomingRefreshToken = req.cookies?.refreshToken;
+
+    if (!incomingRefreshToken) {
+        throw new apiError(401, "Refresh token missing");
     }
+
+    let newAccessToken;
+    let newRefreshToken;
+    let options;
+
     try {
-        const verifiedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+        const verifiedToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        );
 
-        const decodedID = verifiedRefreshToken.id
+        const user = await User.findById(verifiedToken.id);
 
-        const user = await User.findById(decodedID)
         if (!user) {
-            throw new apiError(404, "User not found")
+            throw new apiError(401, "Invalid refresh token");
         }
-        if (refreshToken !== user.refreshToken) {
-            throw new apiError(401, "Invalid Refresh Token");
+
+        if (incomingRefreshToken !== user.refreshToken) {
+            throw new apiError(401, "Invalid refresh token");
         }
-        const newAccessToken = await user.generateAccessToken()
-        const newRefreshToken = await user.generateRefreshToken()
-        user.refreshToken = newRefreshToken
 
-        await user.save({
-            validateBeforeSave: false
-        })
-const options = {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "strict",
-    path: "/",
-};
+        newAccessToken = await user.generateAccessToken();
+        newRefreshToken = await user.generateRefreshToken();
 
+        user.refreshToken = newRefreshToken;
+
+        await user.save({ validateBeforeSave: false });
+
+        const isProduction = process.env.NODE_ENV === "production";
+
+        options = {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "strict",
+            path: "/",
+        };
     } catch (error) {
-        throw new apiError(401, "Invalid or expired refresh token")
+        if (error instanceof apiError) {
+            throw error;
+        }
+
+        throw new apiError(401, "Invalid or expired refresh token");
     }
+
     return res
         .status(200)
         .cookie("accessToken", newAccessToken, options)
         .cookie("refreshToken", newRefreshToken, options)
-        .json(new apiResponse(
-            200,
-            {},
-            "Access token refreshed successfully"
-        ))
-})
+        .json(
+            new apiResponse(
+                200,
+                {},
+                "Access token refreshed successfully"
+            )
+        );
+});
+
 export const updateProfile = asyncHandler(async (req, res) => {
     const {
         fullName,
