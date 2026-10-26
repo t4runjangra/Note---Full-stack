@@ -3,7 +3,9 @@ import authRouter from "./routes/auth.routes.js";
 import noteRouter from "./routes/note.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors"
-
+import redis from "./config/redis.js";
+import redisTestRoute from "./routes/redisTest.routes.js";
+import mongoose from "mongoose";
 const app = express();
 
 
@@ -12,6 +14,7 @@ app.use(express.json())
 
 app.use(cookieParser());
 
+app.use('/api/v1', redisTestRoute);
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN || "http://localhost:5173",
@@ -34,9 +37,16 @@ app.get('/', (req, res) => {
 })
 
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'healthy', uptime: process.uptime() });
+    res.status(200).json({
+        status: 'healthy',
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+        services: {
+            mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+            redis: redis.status, 
+        },
+    });
 });
-
 app.use("/api/v1/auth", authRouter)
 
 app.use("/api/v1", noteRouter)
